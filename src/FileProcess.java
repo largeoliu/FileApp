@@ -8,9 +8,15 @@ public class FileProcess {
             (byte)0x89, (byte)0x01, (byte)0x23, (byte)0x45 };
 	
 	private final static int KEYLEN = 8;
+	private final static int MAGICLEN = 8;
 	
 	public static void encryptStream(FileInputStream in, FileOutputStream out)
 			throws IOException {
+		
+		for (int i = 0; i < MAGICLEN; i++) {
+			out.write((int)Math.random()*10);
+		}
+		
 		byte[] buf1 = new byte[KEYLEN];
 		in.read(buf1);
 		out.write(encryptByte(buf1));
@@ -24,6 +30,8 @@ public class FileProcess {
 	}
 
 	public static void decryptStream(FileInputStream in, FileOutputStream out) throws IOException {
+		in.skip(MAGICLEN);
+		
 		byte[] buf1 = new byte[KEYLEN];
 		in.read(buf1);
 		out.write(decryptByte(buf1));
